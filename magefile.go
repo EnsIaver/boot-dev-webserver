@@ -21,6 +21,14 @@ func Build() error {
 	return cmd.Run()
 }
 
+// Builds and runs the app
+func Run() error {
+	mg.Deps(Build)
+	fmt.Println("Running...")
+	cmd := exec.Command("./bin/"+binaryName)
+	return cmd.Run()
+}
+
 // A custom install step if you need your bin someplace other than go/bin
 func Install() error {
 	mg.Deps(Build)
