@@ -18,8 +18,12 @@ func main() {
 	dir := http.Dir(webFilesDirectory)
 	fs := http.FileServer(dir)
 
-	mux.Handle("/app/", http.StripPrefix("/app", fs))
+	cfg := apiConfig{}
+	fileServerHandler := http.StripPrefix("/app", fs)
+	mux.Handle("/app", cfg.middlewareMetrics(fileServerHandler))
 	mux.HandleFunc("/healthz", healthCheck)
+	mux.HandleFunc("/metrics", cfg.getMetrics)
+	mux.HandleFunc("/reset", cfg.resetMetrics)
 
 	corsMux := middlewareCors(mux)
 	loggingMux := middlewareLogging(corsMux)
