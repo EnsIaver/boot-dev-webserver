@@ -1,12 +1,19 @@
-package main
+package middleware
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
-func middlewareCors(next http.Handler) http.Handler {
+func Wrap(r chi.Router) http.Handler {
+	corsR := Cors(r)
+	loggingR := Logging(corsR)
+	return loggingR
+}
+
+func Cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
@@ -20,17 +27,10 @@ func middlewareCors(next http.Handler) http.Handler {
 	})
 }
 
-func middlewareLogging(next http.Handler) http.Handler {
+func Logging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request: %s", r.URL)
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (cfg *apiConfig) middlewareMetrics(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cfg.fileServerHits += 1
-		fmt.Println(cfg.fileServerHits)
-		next.ServeHTTP(w, r)
-	})
-}
