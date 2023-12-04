@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -22,6 +23,14 @@ func middlewareCors(next http.Handler) http.Handler {
 func middlewareLogging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request: %s", r.URL)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (cfg *apiConfig) middlewareMetrics(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cfg.fileServerHits += 1
+		fmt.Println(cfg.fileServerHits)
 		next.ServeHTTP(w, r)
 	})
 }
