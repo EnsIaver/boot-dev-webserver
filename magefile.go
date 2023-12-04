@@ -17,7 +17,7 @@ const (
 // A build step that requires additional params, or platform specific steps for example
 func Build() error {
 	fmt.Println("Building...")
-	cmd := exec.Command("go", "build", "-o", "./bin/"+binaryName, ".")
+	cmd := exec.Command("go", "build", "-o", "./bin/"+binaryName, "./cmd/webserver/")
 	return cmd.Run()
 }
 
@@ -25,7 +25,7 @@ func Build() error {
 func Run() error {
 	mg.Deps(Build)
 	fmt.Println("Running...")
-	cmd := exec.Command("./bin/"+binaryName)
+	cmd := exec.Command("./bin/" + binaryName)
 	return cmd.Run()
 }
 
@@ -39,5 +39,5 @@ func Install() error {
 // Clean up after yourself
 func Clean() {
 	fmt.Println("Cleaning...")
-	os.RemoveAll(binaryName)
+	os.RemoveAll("./bin")
 }
