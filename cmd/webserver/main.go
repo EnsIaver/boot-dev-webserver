@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"git.standa.dev/boot-dev-webserver/pkg/api"
+	"git.standa.dev/boot-dev-webserver/pkg/handlers"
 	"git.standa.dev/boot-dev-webserver/pkg/config"
 	"git.standa.dev/boot-dev-webserver/pkg/fileserver"
 	"git.standa.dev/boot-dev-webserver/pkg/middleware"
@@ -20,8 +20,9 @@ const (
 func main() {
 	r := chi.NewRouter()
 	cfg := &config.ApiConfig{}
-	r.Mount("/api", api.NewRouter(cfg))
+	r.Mount("/api", handlers.NewApiRouter(cfg))
 	r.Mount("/app", fileserver.NewRouter(cfg))
+	r.Mount("/admin", handlers.NewAdminRouter(cfg))
 	handler := middleware.Wrap(r)
 
 	addr := fmt.Sprintf("%s:%s", hostname, port)
