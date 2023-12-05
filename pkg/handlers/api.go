@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"net/http"
@@ -7,10 +7,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(cfg *config.ApiConfig) chi.Router {
+func NewApiRouter(cfg *config.ApiConfig) chi.Router {
 	r := chi.NewRouter()
 	r.Get("/healthz", healthCheck)
-	r.Get("/metrics", cfg.GetMetrics)
 	r.HandleFunc("/reset", cfg.ResetMetrics)
 	return r
 }
@@ -20,4 +19,3 @@ func healthCheck(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
-

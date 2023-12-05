@@ -3,6 +3,9 @@ package config
 import (
 	"fmt"
 	"net/http"
+	"text/template"
+
+	"git.standa.dev/boot-dev-webserver/pkg/templates"
 )
 
 type ApiConfig struct {
@@ -19,9 +22,24 @@ func (cfg *ApiConfig) MiddlewareMetrics(next http.Handler) http.Handler {
 
 func (cfg *ApiConfig) GetMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/plain; charset=utf-8")
+	t, err := template.ParseFiles("templates/admin/metrics.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Internal Server Error"))
+		return
+	}
+
+	tData := templates.AdminMetricsTemplate{
+		Hits: cfg.FileServerHits,
+	}
+	t.Execute(w, tData)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Internal Server Error"))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	payload := fmt.Sprintf("Hits: %d", cfg.FileServerHits)
-	w.Write([]byte(payload))
 }
 
 func (cfg *ApiConfig) ResetMetrics(w http.ResponseWriter, r *http.Request) {
