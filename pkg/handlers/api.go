@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
+	"git.standa.dev/boot-dev-webserver/pkg/chirps"
 	"git.standa.dev/boot-dev-webserver/pkg/config"
 	"github.com/go-chi/chi/v5"
 )
@@ -38,7 +38,6 @@ func validateChirp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-		fmt.Println(w.Header())
 	err = json.Unmarshal(bodyBytes, &body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -46,7 +45,6 @@ func validateChirp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-		fmt.Println(w.Header())
 	if len(body.Body) > 140 {
 		response := ErrorResponse{
 			Error: "Chirp too long",
@@ -63,8 +61,8 @@ func validateChirp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := ValidityResponse{
-		Valid: true,
+	response := CleanedValidityResponse{
+		Body: chirps.CleanChirpMessage(body.Body),
 	}
 	responseBytes, err := json.Marshal(response)
 	if err != nil {
