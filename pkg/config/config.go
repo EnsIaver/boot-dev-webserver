@@ -5,8 +5,14 @@ import (
 	"net/http"
 	"text/template"
 
+	"git.standa.dev/boot-dev-webserver/pkg/database"
 	"git.standa.dev/boot-dev-webserver/pkg/templates"
 )
+
+type Config struct {
+	ApiConfig ApiConfig
+	Storage database.ChirpStorage
+}
 
 type ApiConfig struct {
 	FileServerHits uint
