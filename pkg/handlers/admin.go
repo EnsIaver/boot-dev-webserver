@@ -5,8 +5,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAdminRouter(cfg *config.ApiConfig) chi.Router {
+func NewAdminRouter(cfg *config.Config) chi.Router {
 	r := chi.NewRouter()
-	r.Get("/metrics", cfg.GetMetrics)
+	r.Get("/metrics", cfg.ApiConfig.GetMetrics)
 	return r
 }
